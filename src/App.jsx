@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 
 const letters = "abcdefghijklmnopqrstuvwxyz";
 const numbers = "0123456789";
@@ -7,13 +7,15 @@ const symbols = "!@#$%^&*()_-=[]{}|;:'\"\\,.<>?/`~";
 function App() {
   
   // Campi Controllati
-  const [fullName, setFullName] = useState("Hyur");
   const [username, setUsername] = useState("justHyur");
   const [password, setPassword] = useState("Password1234!");
-  const [specialization, setSpecialization] = useState("Full Stack");
-  const [experienceYears, setExperienceYears] = useState("10");
   const [description, setDescription] = useState("Sono l'insegnante di questo corso e mi sto inscrivendo a questo magnifico sito internet creato per l'occasione");
-
+  // Campi noncontrollati
+  const fullNameRef = useRef();
+  const specializationRef = useRef();
+  const experienceYearsRef = useRef();
+  
+// Validazione
   const isUsernameValid = useMemo(() => {
     // Username: Deve contenere solo caratteri alfanumerici e almeno 6 caratteri (no spazi o simboli).
     const charsValid = username.split("").every(char => 
@@ -44,6 +46,12 @@ function App() {
 
   const handleSubmit = e => {
     e.preventDefault();
+
+    // Valori non controllati
+    const fullName = fullNameRef.current.value;
+    const specialization = specializationRef.current.value;
+    const experienceYears = experienceYearsRef.current.value;
+
     if(
       !fullName.trim() ||
       !username.trim() ||
@@ -78,8 +86,7 @@ function App() {
         <p>Nome Completo</p>
         <input
          type="text"
-         value={fullName}
-         onChange={(e) => setFullName(e.target.value)}
+         ref={fullNameRef}
          />
       </label>
       <label>
@@ -111,9 +118,9 @@ function App() {
       <label>
         <p>Specializzazione</p>
         <select 
-          value={specialization}
-          onChange={e => setSpecialization(e.target.value)}
+          ref={specializationRef}
         >
+          <option value="Seleziona">Seleziona</option>
           <option value="Full Stack">Full Stack</option>
           <option value="Frontend">Frontend</option>
           <option value="Backend">Backend</option>
@@ -123,8 +130,7 @@ function App() {
         <p>Anni di esperienza</p>
         <input
          type="number"
-         value={experienceYears}
-         onChange={(e) => setExperienceYears(e.target.value)}
+         ref={experienceYearsRef}
          />
       </label>
       <label>
@@ -150,14 +156,9 @@ export default App
 
 // 💡 Premessa: Stai sviluppando un form di registrazione per una piattaforma dedicata ai giovani sviluppatori web. Gli utenti devono iscriversi indicando le loro competenze e specializzazioni.
 
-// 📌 Milestone 2: Validare in tempo reale
-// Aggiungere la validazione in tempo reale dei seguenti campi:
+// 📌 Milestone 3: Convertire i Campi Non Controllati
+// Non tutti i campi del form necessitano di essere aggiornati a ogni carattere digitato. Alcuni di essi non influenzano direttamente l’interfaccia mentre l’utente li compila, quindi è possibile gestirli in modo più efficiente.
 
-// ✅ Username: Deve contenere solo caratteri alfanumerici e almeno 6 caratteri (no spazi o simboli).
-
-// ✅ Password: Deve contenere almeno 8 caratteri, 1 lettera, 1 numero e 1 simbolo.
-
-// ✅ Descrizione: Deve contenere tra 100 e 1000 caratteri (senza spazi iniziali e finali).
-
-// Suggerimento: Per semplificare la validazione, puoi definire tre stringhe con i caratteri validi e usare .includes() per controllare se i caratteri appartengono a una di queste categorie:
-// Per ciascuno dei campi validati in tempo reale, mostrare un messaggio di errore (rosso) nel caso non siano validi, oppure un messaggio di conferma (verde) nel caso siano validi.
+// Analizza il form: Identifica quali campi devono rimanere controllati e quali invece possono essere non controllati senza impattare l’esperienza utente.
+// Converti i campi non controllati: Usa useRef() per gestirli e recuperare il loro valore solo al momento del submit.
+// Assicurati che la validazione continui a funzionare: Anche se un campo non è controllato, deve comunque essere validato correttamente quando l’utente invia il form.
