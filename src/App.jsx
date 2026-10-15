@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 
 const letters = "abcdefghijklmnopqrstuvwxyz";
 const numbers = "0123456789";
@@ -78,10 +78,27 @@ function App() {
     
   }
 
+  useEffect(() => {
+    fullNameRef.current.focus();
+  },[]);
+
+  const resetForm = e => {
+    e.preventDefault();
+    setUsername("");
+    setPassword("");
+    setDescription("");
+    fullNameRef.current.value = "";
+    specializationRef.current.value = "";
+    experienceYearsRef.current.value = "";
+    fullNameRef.current.focus();
+  }
+
+  const formRef = useRef();
+
   return (
    <div>
     <h1>Web Developer Signup</h1>
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} ref={formRef}>
       <label>
         <p>Nome Completo</p>
         <input
@@ -146,7 +163,12 @@ function App() {
          )}
       </label>
       <button type="submit">Registrati</button>
+      <button onClick={resetForm}>Reset</button>
     </form>
+    <footer style={{height: '100vh'}}></footer>
+    <button id="scrolltop-arrow" onClick={() => {
+      formRef.current.scrollIntoView({behavior: "smooth"});
+    }}>Torna Su</button>
    </div>
   );
 }
@@ -156,9 +178,11 @@ export default App
 
 // 💡 Premessa: Stai sviluppando un form di registrazione per una piattaforma dedicata ai giovani sviluppatori web. Gli utenti devono iscriversi indicando le loro competenze e specializzazioni.
 
-// 📌 Milestone 3: Convertire i Campi Non Controllati
-// Non tutti i campi del form necessitano di essere aggiornati a ogni carattere digitato. Alcuni di essi non influenzano direttamente l’interfaccia mentre l’utente li compila, quindi è possibile gestirli in modo più efficiente.
+// Bonus: Migliorare l'Usabilità
+// Utilizziamo useRef() per migliorare l’esperienza utente, implementando le seguenti funzionalità:
 
-// Analizza il form: Identifica quali campi devono rimanere controllati e quali invece possono essere non controllati senza impattare l’esperienza utente.
-// Converti i campi non controllati: Usa useRef() per gestirli e recuperare il loro valore solo al momento del submit.
-// Assicurati che la validazione continui a funzionare: Anche se un campo non è controllato, deve comunque essere validato correttamente quando l’utente invia il form.
+// Focus automatico al primo input (Nome) al mount del componente.
+// Bottone "Reset" in fondo al form per ripristinare tutti i valori:
+// Gli input controllati devono tornare ai valori iniziali.
+// Gli input non controllati devono essere resettati manualmente usando useRef().
+// Freccia fissa in basso a destra che, quando cliccata, riporta l'utente all'inizio del form (bisogna usare position: fixed).
